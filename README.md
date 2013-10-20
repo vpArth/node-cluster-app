@@ -4,11 +4,13 @@ node-cluster-app
 ================
 
 #Basic nodejs application using cluster
+## Install
+  `npm install node-cluster-app`
 
 ##Usage:
 
 ```javascript
-var ClusterApp = require('cluster-app')
+var ClusterApp = require('node-cluster-app')
 
 var app = new ClusterApp()
 app.init('worker.js')
@@ -34,7 +36,7 @@ Also view sample app in the [examples][] directory
   * `disconnect` - worker disconnect
   * `exit` - worker exited
   * `setup` - cluster `setupMaster` was executed
-  
+
 **Also it has a number own events:**
   * `timeout` - Emited on worker not emit `listen` event longer than timeout value
     - `worker` - [Worker object][]
