@@ -1,0 +1,29 @@
+{
+  "name": "node-cluster-app",
+  "version": "0.0.0",
+  "description": "Basic nodejs application using cluster",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "node tests/run.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vpArth/node-cluster-app.git"
+  },
+  "keywords": [
+    "node",
+    "cluster"
+  ],
+  "author": "Alexander Deider <arth.inbox@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vpArth/node-cluster-app/issues"
+  },
+  "devDependencies": {
+    "async": "~0.2.9",
+    "request": "~2.27.0"
+  }
+}
