@@ -1,7 +1,6 @@
 var Tool   = require('../index')
   , Test   = require('./test')
   , assert = require('assert')
-  , errors = require('../lib/errors')
   , util   = require('util')
   ;
 var tests = new Test('Four Exit Workers Test')

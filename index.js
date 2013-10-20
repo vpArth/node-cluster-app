@@ -22,11 +22,6 @@ function App(options){
     , evlog   = options && options.evlog   || false
     , started = false
 
-  function setWorker(value){ 
-    if(!value) throw new ClusterAppError('Empty worker value')
-    worker = value 
-  }
-
   function setEvlog(value){ 
     evlog = value
   }
@@ -113,7 +108,6 @@ function App(options){
       start()
     }).stop()
   }
-  this.setWorker = setWorker
   this.init      = init
   this.start     = start
   this.stop      = stop

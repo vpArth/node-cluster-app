@@ -1,7 +1,6 @@
 var Tool   = require('..')
   , Test   = require('./test')
   , assert = require('assert')
-  , errors = require('../lib/errors')
   , util   = require('util')
   , http   = require('http')
   , domain = require('domain')
