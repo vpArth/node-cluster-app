@@ -22,13 +22,14 @@ function App(options){
     , evlog   = options && options.evlog   || false
     , started = false
 
-  function setEvlog(value){ 
+  function setEvlog(value){
     evlog = value
+    return self
   }
 
   function init(w){
     if(!w)     throw new ClusterAppError('Empty worker value')
-    if(typeof worker!='undefined') 
+    if(typeof worker!='undefined')
       throw new ClusterAppError('Already initialized')
     try{
       require.resolve(w)
@@ -40,6 +41,7 @@ function App(options){
       exec : worker,
       silent : false
     })
+    return this
   }
   function start(){
     if(typeof worker=='undefined')  throw new ClusterAppError('Empty worker value')
@@ -70,7 +72,7 @@ function App(options){
       // console.log('self.on(exit)', worker.uniqueID, 'exited')
       clearTimeout(timeouts[worker.uniqueID]);
       if(respawn) cluster.fork();//on exit restart
-    })    
+    })
 
     for(var i=0; i<workers; i++ ) {
       (function(w){
@@ -88,6 +90,7 @@ function App(options){
     }
     self.emit('start')
     started = true;
+    return self
   }
 
   function stop(){
@@ -100,14 +103,16 @@ function App(options){
     self.on('noworkers', function(){
       respawn = t;
     })
-    started = false;
+    started = false
     self.emit('stop')
+    return self
   }
 
   function restart(){
     self.on('stop', function(){
       start()
     }).stop()
+    return self
   }
   this.init      = init
   this.start     = start
