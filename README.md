@@ -51,6 +51,7 @@ It can to talk with a ClusterApp throw standard `process.send(msg)` mechanism
 Commands transferred by `msg.actions` param
 For now supports next commands:
   * `stop` - Initiate stopping of the ClusterApp
+  * `restart` - Initiate restarting of the ClusterApp
   * `log`  - Transfer some data to ClusterApp `log` event
     - `msg` - Provided data
 For details you can review sample [httpworker][] in `/tests` directory of this repo

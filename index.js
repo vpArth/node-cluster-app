@@ -79,8 +79,9 @@ function App(options){
             self.emit('noworkers')
         }).on('message', function(msg){
           switch(msg.action){
-            case 'stop': return self.stop();
-            case 'log':  return self.emit('log', msg.msg);
+            case 'stop':    return self.stop();
+            case 'restart': return self.restart();
+            case 'log':     return self.emit('log', msg.msg);
           }
         })
       })(cluster.fork())

@@ -19,8 +19,15 @@ function HttpWorker(){
           res.write('Stopped')
           res.end()
           process.send({
-              action: 'stop'
-            });
+            action: 'stop'
+          });
+        break
+        case 'restart':
+          res.write('Stopped')
+          res.end()
+          process.send({
+            action: 'restart'
+          });
           return process.exit(1);
         break
         default: 
@@ -40,8 +47,8 @@ util.inherits(HttpWorker, events.EventEmitter)
 
 module.exports = HttpWorker;
 
-  var p = new HttpWorker
-  p.on('listen', function(address){
-    // util.log(util.format('[HttpWorker] Listen %s', address.port))
-  })
-  p.start();
+var p = new HttpWorker
+p.on('listen', function(address){
+  // util.log(util.format('[HttpWorker] Listen %s', address.port))
+})
+p.start();

@@ -58,9 +58,7 @@ tests.add('Http request', function httpRequest(success, fail) {
 
 tests.add('Http: stop action', function stopAction(success, fail) {
   var d = domain.create()
-  d.on('error', function(e){
-    fail(e)
-  })
+  d.on('error', fail)
   d.run(function(){
     setImmediate(function(){
       tool.once('listening', function(w, address){
@@ -74,6 +72,31 @@ tests.add('Http: stop action', function stopAction(success, fail) {
         assert.equal(msg, 'GET /?action=stop');
       }).once('stop', function(){
         success();
+      })
+      tool.setEvlog(false)
+      tool.start()
+    })
+  })
+})
+
+tests.add('Http: restart action', function restartAction(success, fail) {
+  var d = domain.create()
+  d.on('error', fail)
+  d.run(function(){
+    setImmediate(function(){
+      tool.once('listening', function(w, address){
+        //make request
+        request.get('http://0.0.0.0:'+address.port+'/?action=restart', function(err, res, body){
+          if(err) throw err;
+          assert.equal(res.statusCode, 200);
+          assert.equal(body, 'Stopped')
+        })
+      }).once('log', function(msg){
+        assert.equal(msg, 'GET /?action=restart');
+      }).once('stop', function(){
+        tool.once('listening', function(){
+          success()
+        })
       })
       tool.setEvlog(false)
       tool.start()
