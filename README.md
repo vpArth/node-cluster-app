@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/vpArth/node-cluster-app.png?branch=master)](https://travis-ci.org/vpArth/node-cluster-app)
-
+[![NPM version](https://badge.fury.io/js/node-cluster-app.png)](http://badge.fury.io/js/node-cluster-app)
 node-cluster-app
 ================
 
