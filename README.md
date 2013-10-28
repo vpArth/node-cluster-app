@@ -12,19 +12,31 @@ node-cluster-app
 ```javascript
 var ClusterApp = require('node-cluster-app')
 
-var app = new ClusterApp()
+var app = new ClusterApp({
+  workers: 2,
+  timeout: 2000,
+  restart: true,
+  evlog:   false
+})
 app.init('worker.js')
 app.start()
 
 ```
 Also view sample app in the [examples][] directory
+
+##Constructor options
+  * `workers` - workers number (default: cpu number)
+  * `timeout` - timeout for `timeout` event
+  * `restart` - automatically restart died workers
+  * `evlog`   - log native [cluster][] events to console
+
 ##Methods
   ClusterApp is [EventEmitter][], so we have all it methods as `emit`, `on` etc.
   * `init` - assign worker
     - `worker` - path to worker's js file
   * `start` - forks neccessary number of workers
   * `stop` - kill all workers
-  * `restart` - Sequantially run of `stop` and `start`
+  * `restart` - Sequentially run of `stop` and `start`
   * `setEvlog` - Set mode of logging all inherited from [cluster][] events by util.log
     - `value` - boolean value(default: false)
 
