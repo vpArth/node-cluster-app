@@ -1,4 +1,4 @@
 //Empty worker
 setInterval(function(){
   console.log('Work...')
-}, 1000).ref()
+}, 1000).ref();

@@ -1,127 +1,138 @@
 var cluster = require('cluster')
-  , util    = require('util')
-  , events  = require('events')
+  , util = require('util')
+  , events = require('events')
+  ;
 
-function ClusterAppError(message){
+function ClusterAppError(message) {
   this.message = message;
   Error.captureStackTrace(this, ClusterAppError);
 }
-util.inherits(ClusterAppError, Error)
+util.inherits(ClusterAppError, Error);
 
-function args(a){
-  var r = []
-  for(var i in a) r[i] = a[i];
-  return r
+function args(a) {
+  return [].slice.call(a, 0);
 }
 
-function App(options){
+function App(options) {
   var self = this
     , workers = options && options.workers || require('os').cpus().length
     , timeout = options && options.timeout || 2000
     , respawn = options && options.restart || false
-    , evlog   = options && options.evlog   || false
+    , evlog   = options && options.evlog || false
     , started = false
+    , inited = false
+    ;
 
-  function setEvlog(value){
-    evlog = value
-    return self
+  function setEvlog(value) {
+    evlog = value;
+    return self;
   }
 
-  function init(w){
-    if(!w)     throw new ClusterAppError('Empty worker value')
-    if(typeof worker!='undefined')
-      throw new ClusterAppError('Already initialized')
-    try{
+  function init(w) {
+    if (!w)     throw new ClusterAppError('Empty worker value');
+    if (inited)
+      throw new ClusterAppError('Already initialized');
+    try {
       require.resolve(w)
-    } catch(e){
+    } catch (e) {
       throw new ClusterAppError('Wrong worker')
     }
-    worker = w;
+    inited = true;
     cluster.setupMaster({
-      exec : worker,
-      silent : false
-    })
-    return this
+      exec: w,
+      silent: false
+    });
+    return this;
   }
-  function start(){
-    if(typeof worker=='undefined')  throw new ClusterAppError('Empty worker value')
-    if(started) throw new ClusterAppError('Already started')
-    ;[
+
+  function start() {
+    if (!inited)  throw new ClusterAppError('Not initialized');
+    if (started) throw new ClusterAppError('Already started');
+    [
       'fork'
-    , 'listening'
-    , 'online'
-    , 'disconnect'
-    , 'exit'
-    ].forEach(function(event){
-      cluster.on(event, function(worker){
-        if(evlog)
-          util.log('Worker '+worker.uniqueID + ': ' + event)
-        self.emit.apply(self, [event].concat(args(arguments)));
-      })
-    })
+      , 'listening'
+      , 'online'
+      , 'disconnect'
+      , 'exit'
+    ].forEach(function (event) {
+        cluster.on(event, function (worker) {
+          if (evlog)
+            util.log('Worker ' + worker.uniqueID + ': ' + event);
+          self.emit.apply(self, [event].concat(args(arguments)));
+        })
+      });
 
     //timeout implementation
     var timeouts = {};
-    self.on('fork', function(worker){
-      timeouts[worker.uniqueID] = setTimeout(function(){
+    self.on('fork',function (worker) {
+      timeouts[worker.uniqueID] = setTimeout(function () {
         self.emit('timeout', worker, timeout)
       }, timeout);
-    }).on('listening', function(worker){
+    }).on('listening',function (worker) {
       clearTimeout(timeouts[worker.uniqueID]);
-    }).on('exit', function(worker){
+    }).on('exit', function (worker) {
       // console.log('self.on(exit)', worker.uniqueID, 'exited')
       clearTimeout(timeouts[worker.uniqueID]);
-      if(respawn) cluster.fork();//on exit restart
-    })
+      if (respawn) cluster.fork();//on exit restart
+    });
 
-    for(var i=0; i<workers; i++ ) {
-      (function(w){
-        w.on('exit', function(){
-          if(!Object.keys(cluster.workers).length)
+    for (var i = 0; i < workers; i++) {
+      (function (w) {
+        w.on('exit',function () {
+          if (!Object.keys(cluster.workers).length)
             self.emit('noworkers')
-        }).on('message', function(msg){
-          switch(msg.action){
-            case 'stop':    return self.stop();
-            case 'restart': return self.restart();
-            case 'log':     return self.emit('log', msg.msg);
+        }).on('message', function (msg) {
+          switch (msg.action) {
+            case 'stop':
+              self.stop();
+              break;
+            case 'restart':
+              self.restart();
+              break;
+            case 'log':
+              self.emit('log', msg.msg);
+              break;
           }
         })
       })(cluster.fork())
     }
-    self.emit('start')
+    self.emit('start');
     started = true;
     return self
   }
 
-  function stop(){
-    if(!started) throw new ClusterAppError('Not started')
-    var t = respawn
-    respawn = false
-    for(var i in cluster.workers){
-      cluster.workers[i].process.kill()
+  function stop() {
+    if (!started) throw new ClusterAppError('Not started');
+    var t = respawn;
+    respawn = false;
+    for (var id in cluster.workers) {
+      if (cluster.workers.hasOwnProperty(id)) {
+        cluster.workers[id].process.kill();
+      }
     }
-    self.on('noworkers', function(){
+    self.on('noworkers', function () {
       respawn = t;
-    })
-    started = false
-    self.emit('stop')
+    });
+    started = false;
+    self.emit('stop');
     return self
   }
 
-  function restart(){
-    self.on('stop', function(){
+  function restart() {
+    self.on('stop',function () {
       start()
-    }).stop()
+    }).stop();
     return self
   }
-  this.init      = init
-  this.start     = start
-  this.stop      = stop
-  this.restart   = restart
-  this.setEvlog  = setEvlog
+
+  this.init = init;
+  this.start = start;
+  this.stop = stop;
+  this.restart = restart;
+  this.setEvlog = setEvlog
 }
-util.inherits(App, events.EventEmitter)
+util.inherits(App, events.EventEmitter);
 
-App.ClusterAppError = ClusterAppError
+App.ClusterAppError = ClusterAppError;
 
-module.exports = App
+module.exports = App;

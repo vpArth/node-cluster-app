@@ -1,2 +1,2 @@
 //Exit worker
-process.exit(process.pid)
+process.exit(process.pid);

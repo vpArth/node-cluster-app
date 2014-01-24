@@ -1,6 +1,6 @@
 {
   "name": "node-cluster-app",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Basic nodejs application using cluster",
   "main": "index.js",
   "directories": {
