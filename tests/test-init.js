@@ -1,5 +1,5 @@
 var Tool = require('../index')
-  , Test = require('./test')
+  , Test   = require('simple-test-runner').Test
   ;
 var tests = new Test('Init Test');
 var tool = new Tool;

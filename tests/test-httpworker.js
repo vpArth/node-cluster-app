@@ -1,5 +1,5 @@
 var Tool = require('..')
-  , Test = require('./test')
+  , Test   = require('simple-test-runner').Test
   , assert = require('assert')
   , domain = require('domain')
   , request = require('request')

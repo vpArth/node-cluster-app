@@ -1,5 +1,5 @@
 var Tool   = require('../index')
-  , Test   = require('./test')
+  , Test   = require('simple-test-runner').Test
   , assert = require('assert')
   ;
 var tests = new Test('Four Exit Workers Test');

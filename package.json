@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "async": "~0.2.9",
-    "request": "~2.27.0"
+    "request": "~2.27.0",
+    "simple-test-runner": "0.0.1"
   }
 }
